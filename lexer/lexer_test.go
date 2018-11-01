@@ -1,8 +1,8 @@
 package lexer
 
 import (
+	"javascript_interpreter/token"
 	"testing"
-	"writinginterpreter/token"
 )
 
 func TestNextToken(t *testing.T) {
@@ -25,6 +25,7 @@ func TestNextToken(t *testing.T) {
 
 		"foobar"
 		"foo bar"
+
 	`
 
 	tests := []struct {
@@ -34,12 +35,12 @@ func TestNextToken(t *testing.T) {
 		{token.LET, "let"},
 		{token.IDENT, "five"},
 		{token.ASSIGN, "="},
-		{token.INT, "5"},
+		{token.NUMBER, "5"},
 		{token.SEMICOLON, ";"},
 		{token.LET, "let"},
 		{token.IDENT, "ten"},
 		{token.ASSIGN, "="},
-		{token.INT, "10"},
+		{token.NUMBER, "10"},
 		{token.SEMICOLON, ";"},
 		{token.LET, "let"},
 		{token.IDENT, "add"},
@@ -52,6 +53,33 @@ func TestNextToken(t *testing.T) {
 		{token.RPAREN, ")"},
 		{token.STRING, "foobar"},
 		{token.STRING, "foo bar"},
+	}
+
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokenType wrong. expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+}
+
+func TestFLOATToken(t *testing.T) {
+
+	input := `1.005 
+	`
+
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.NUMBER, "1.005"},
 	}
 
 	l := New(input)

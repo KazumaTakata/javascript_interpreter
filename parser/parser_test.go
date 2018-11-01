@@ -2,17 +2,17 @@ package parser
 
 import (
 	"fmt"
+	"javascript_interpreter/ast"
+	"javascript_interpreter/lexer"
 	"testing"
-	"writinginterpreter/ast"
-	"writinginterpreter/lexer"
 )
 
 func TestLetStatement(t *testing.T) {
 
 	input := `
 		let x = 5;
-		let y = 10;
-		let foobar = 855;
+		let y = 10.01;
+		let foobar = 85.5;
 	`
 
 	l := lexer.New(input)
@@ -165,7 +165,7 @@ func TestIntegerLiteralExpression(t *testing.T) {
 		t.Fatalf("program.Statement[0] is not ast.ExpressionStatement. got=%T", program.Statements[0])
 	}
 
-	literal, ok := stmt.Expression.(*ast.IntegerLiteral)
+	literal, ok := stmt.Expression.(*ast.NumberLiteral)
 
 	if !ok {
 		t.Fatalf("exp not *ast.IntegerLiteral. got=%T", literal.Value)
@@ -178,9 +178,9 @@ func TestIntegerLiteralExpression(t *testing.T) {
 
 func TestParsingPrefixExpressions(t *testing.T) {
 	prefixTests := []struct {
-		input        string
-		operator     string
-		integerValue int64
+		input       string
+		operator    string
+		NumberValue float64
 	}{
 		{"!5", "!", 5},
 		{"-15;", "-", 15},
@@ -211,15 +211,15 @@ func TestParsingPrefixExpressions(t *testing.T) {
 			t.Fatalf("exp.Operator is not '%s'. got = %s", tt.operator, exp.Operator)
 		}
 
-		if !testIntegerLiteral(t, exp.Right, tt.integerValue) {
+		if !testNumberLiteral(t, exp.Right, tt.NumberValue) {
 			return
 		}
 	}
 
 }
 
-func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
-	integ, ok := il.(*ast.IntegerLiteral)
+func testNumberLiteral(t *testing.T, il ast.Expression, value float64) bool {
+	integ, ok := il.(*ast.NumberLiteral)
 	if !ok {
 		t.Errorf("il not *ast.IntegerLiteral. got=%T", il)
 		return false
@@ -240,9 +240,9 @@ func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 func TestParsingInfixExpression(t *testing.T) {
 	infixTests := []struct {
 		input      string
-		leftValue  int64
+		leftValue  float64
 		operator   string
-		rightValue int64
+		rightValue float64
 	}{
 		{"5 != 5", 5, "!=", 5},
 		{"5 + 5", 5, "+", 5},
@@ -277,7 +277,7 @@ func TestParsingInfixExpression(t *testing.T) {
 			t.Fatalf("exp is not ast.InfixExpression. got=%T", stmt.Expression)
 		}
 
-		if !testIntegerLiteral(t, exp.Left, tt.leftValue) {
+		if !testNumberLiteral(t, exp.Left, tt.leftValue) {
 			return
 		}
 
@@ -285,7 +285,7 @@ func TestParsingInfixExpression(t *testing.T) {
 			t.Fatalf("exp.Operator is not '%s'. got=%s", tt.operator, exp.Operator)
 		}
 
-		if !testIntegerLiteral(t, exp.Right, tt.rightValue) {
+		if !testNumberLiteral(t, exp.Right, tt.rightValue) {
 			return
 		}
 

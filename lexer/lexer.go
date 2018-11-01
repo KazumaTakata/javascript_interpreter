@@ -1,12 +1,17 @@
 package lexer
 
-import "writinginterpreter/token"
+import (
+	"fmt"
+	"javascript_interpreter/token"
+	"strconv"
+)
 
 type Lexer struct {
 	input        string
 	position     int
 	readPosition int
 	ch           byte
+	ch_str       string
 }
 
 func (l *Lexer) readChar() {
@@ -14,6 +19,7 @@ func (l *Lexer) readChar() {
 		l.ch = 0
 	} else {
 		l.ch = l.input[l.readPosition]
+		l.ch_str = string(l.ch)
 	}
 	l.position = l.readPosition
 	l.readPosition += 1
@@ -52,10 +58,8 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
-
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
-	case '"'
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
 	case '<':
@@ -74,10 +78,16 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
-		} else if isDigit(l.ch) {
-			tok.Type = token.INT
+		} else if isDigitOrDot(l.ch) {
+			tok.Type = token.NUMBER
 			tok.Literal = l.readNumber()
-			return tok
+			floatNumber := string(tok.Literal)
+			if isNumeric(floatNumber) {
+				return tok
+			} else {
+				fmt.Errorf("")
+			}
+
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
@@ -112,7 +122,7 @@ func (l *Lexer) readIdentifier() string {
 
 func (l *Lexer) readNumber() string {
 	position := l.position
-	for isDigit(l.ch) {
+	for isDigitOrDot(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]
@@ -132,6 +142,11 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-func isDigit(ch byte) bool {
-	return '0' <= ch && ch <= '9'
+func isDigitOrDot(ch byte) bool {
+	return '0' <= ch && ch <= '9' || ch == '.'
+}
+
+func isNumeric(s string) bool {
+	_, err := strconv.ParseFloat(s, 64)
+	return err == nil
 }

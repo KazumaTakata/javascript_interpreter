@@ -3,8 +3,8 @@ package object
 import (
 	"bytes"
 	"fmt"
+	"javascript_interpreter/ast"
 	"strings"
-	"writinginterpreter/ast"
 )
 
 type ObjectType string
@@ -30,19 +30,19 @@ type Object interface {
 	Inspect() string
 }
 
-type Integer struct {
-	Value int64
+type Number struct {
+	Value float64
 }
 
 type Boolean struct {
 	Value bool
 }
 
-func (i *Integer) Inspect() string {
-	return fmt.Sprintf("%d", i.Value)
+func (i *Number) Inspect() string {
+	return fmt.Sprintf("%f", i.Value)
 }
 
-func (i *Integer) Type() ObjectType { return INTEGER_OBJ }
+func (i *Number) Type() ObjectType { return INTEGER_OBJ }
 
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }

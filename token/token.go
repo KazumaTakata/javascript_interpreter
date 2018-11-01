@@ -11,7 +11,7 @@ const (
 	ILLEGAL  = "ILLEGAL"
 	EOF      = "EOF"
 	IDENT    = "IDENT"
-	INT      = "INT"
+	NUMBER   = "NUMBER"
 	STRING   = "STRING"
 	ASSIGN   = "="
 	PLUS     = "+"

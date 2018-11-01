@@ -2,8 +2,8 @@ package ast
 
 import (
 	"bytes"
+	"javascript_interpreter/token"
 	"strings"
-	"writinginterpreter/token"
 )
 
 type Node interface {
@@ -118,16 +118,16 @@ func (es *ExpressionStatement) String() string {
 	return ""
 }
 
-type IntegerLiteral struct {
+type NumberLiteral struct {
 	Token token.Token
-	Value int64
+	Value float64
 }
 
-func (il *IntegerLiteral) expressionNode() {}
+func (il *NumberLiteral) expressionNode() {}
 
-func (il *IntegerLiteral) TokenLiteral() string { return il.Token.Literal }
+func (il *NumberLiteral) TokenLiteral() string { return il.Token.Literal }
 
-func (il *IntegerLiteral) String() string { return il.Token.Literal }
+func (il *NumberLiteral) String() string { return il.Token.Literal }
 
 type PrefixExpression struct {
 	Token    token.Token

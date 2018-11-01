@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"writinginterpreter/evaluator"
-	"writinginterpreter/lexer"
-	"writinginterpreter/object"
-	"writinginterpreter/parser"
+	"javascript_interpreter/evaluator"
+	"javascript_interpreter/lexer"
+	"javascript_interpreter/object"
+	"javascript_interpreter/parser"
 )
 
 const PROMPT = ">> "

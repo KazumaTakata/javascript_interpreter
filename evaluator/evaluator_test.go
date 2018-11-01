@@ -1,16 +1,16 @@
 package evaluator
 
 import (
+	"javascript_interpreter/lexer"
+	"javascript_interpreter/object"
+	"javascript_interpreter/parser"
 	"testing"
-	"writinginterpreter/lexer"
-	"writinginterpreter/object"
-	"writinginterpreter/parser"
 )
 
 func TestEvalIntegerExpression(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected int64
+		expected float64
 	}{
 		{"5", 5},
 		{"10", 10},
@@ -22,7 +22,7 @@ func TestEvalIntegerExpression(t *testing.T) {
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIntegerObject(t, evaluated, tt.expected)
+		testNumberObject(t, evaluated, tt.expected)
 	}
 }
 
@@ -35,8 +35,8 @@ func testEval(input string) object.Object {
 	return Eval(program, env)
 }
 
-func testIntegerObject(t *testing.T, obj object.Object, expected int64) bool {
-	result, ok := obj.(*object.Integer)
+func testNumberObject(t *testing.T, obj object.Object, expected float64) bool {
+	result, ok := obj.(*object.Number)
 
 	if !ok {
 		t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
@@ -124,7 +124,7 @@ func TestIfElseExpression(t *testing.T) {
 		integer, ok := tt.expected.(int)
 
 		if ok {
-			testIntegerObject(t, evaluated, int64(integer))
+			testNumberObject(t, evaluated, float64(integer))
 		} else {
 			testNullObject(t, evaluated)
 		}
@@ -138,7 +138,7 @@ func testNullObject(t *testing.T, obj object.Object) bool {
 func TestReturnStatements(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected int64
+		expected float64
 	}{
 		{"return 10;", 10},
 		{"return 10; 9", 10},
@@ -148,7 +148,7 @@ func TestReturnStatements(t *testing.T) {
 
 	for _, tt := range tests {
 		evaluated := testEval(tt.input)
-		testIntegerObject(t, evaluated, tt.expected)
+		testNumberObject(t, evaluated, tt.expected)
 	}
 }
 
@@ -188,7 +188,7 @@ func TestLetStatements(t *testing.T) {
 
 	tests := []struct {
 		input    string
-		expected int64
+		expected float64
 	}{
 		{"let a = 5; a", 5},
 		{"let a = 5 * 5; a;", 25},
@@ -196,7 +196,7 @@ func TestLetStatements(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		testIntegerObject(t, testEval(tt.input), tt.expected)
+		testNumberObject(t, testEval(tt.input), tt.expected)
 	}
 
 }
@@ -232,7 +232,7 @@ func TestFunctionObject(t *testing.T) {
 func TestFunctionApplication(t *testing.T) {
 	tests := []struct {
 		input    string
-		expected int64
+		expected float64
 	}{
 		{"let identity = fn(x){ x; } identity(5);", 5},
 		{"let identity = fn(x){ return x;};  identity(5);", 5},
@@ -242,6 +242,6 @@ func TestFunctionApplication(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		testIntegerObject(t, testEval(tt.input), tt.expected)
+		testNumberObject(t, testEval(tt.input), tt.expected)
 	}
 }

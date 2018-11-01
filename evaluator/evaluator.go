@@ -2,8 +2,8 @@ package evaluator
 
 import (
 	"fmt"
-	"writinginterpreter/ast"
-	"writinginterpreter/object"
+	"javascript_interpreter/ast"
+	"javascript_interpreter/object"
 )
 
 var (
@@ -18,8 +18,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalStatements(node.Statements, env)
 	case *ast.ExpressionStatement:
 		return Eval(node.Expression, env)
-	case *ast.IntegerLiteral:
-		return &object.Integer{Value: node.Value}
+	case *ast.NumberLiteral:
+		return &object.Number{Value: node.Value}
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.PrefixExpression:
@@ -163,18 +163,18 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 }
 
 func evalIntegerInfixExpression(operator string, left, right object.Object) object.Object {
-	leftVal := left.(*object.Integer).Value
-	rightVal := right.(*object.Integer).Value
+	leftVal := left.(*object.Number).Value
+	rightVal := right.(*object.Number).Value
 
 	switch operator {
 	case "+":
-		return &object.Integer{Value: leftVal + rightVal}
+		return &object.Number{Value: leftVal + rightVal}
 	case "-":
-		return &object.Integer{Value: leftVal - rightVal}
+		return &object.Number{Value: leftVal - rightVal}
 	case "*":
-		return &object.Integer{Value: leftVal * rightVal}
+		return &object.Number{Value: leftVal * rightVal}
 	case "/":
-		return &object.Integer{Value: leftVal / rightVal}
+		return &object.Number{Value: leftVal / rightVal}
 	case "<":
 		return nativeBoolToBooleanObject(leftVal < rightVal)
 	case ">":
@@ -243,8 +243,8 @@ func evalMinusPrefixOperatorExpression(right object.Object) object.Object {
 		return newError("unknown operator: -%s", right.Type())
 	}
 
-	value := right.(*object.Integer).Value
-	return &object.Integer{Value: -value}
+	value := right.(*object.Number).Value
+	return &object.Number{Value: -value}
 }
 
 func newError(format string, a ...interface{}) *object.Error {

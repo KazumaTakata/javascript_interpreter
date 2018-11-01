@@ -2,10 +2,10 @@ package parser
 
 import (
 	"fmt"
+	"javascript_interpreter/ast"
+	"javascript_interpreter/lexer"
+	"javascript_interpreter/token"
 	"strconv"
-	"writinginterpreter/ast"
-	"writinginterpreter/lexer"
-	"writinginterpreter/token"
 )
 
 const (
@@ -35,7 +35,7 @@ func New(l *lexer.Lexer) *Parser {
 
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
-	p.registerPrefix(token.INT, p.parseIntegerLiteral)
+	p.registerPrefix(token.NUMBER, p.parseNumberLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
@@ -356,10 +356,10 @@ type (
 	infixParseFn  func(ast.Expression) ast.Expression
 )
 
-func (p *Parser) parseIntegerLiteral() ast.Expression {
-	lit := &ast.IntegerLiteral{Token: p.curToken}
+func (p *Parser) parseNumberLiteral() ast.Expression {
+	lit := &ast.NumberLiteral{Token: p.curToken}
 
-	value, err := strconv.ParseInt(p.curToken.Literal, 0, 64)
+	value, err := strconv.ParseFloat(p.curToken.Literal, 64)
 
 	if err != nil {
 		msg := fmt.Sprintf("could not parse %q as integer", p.curToken.Literal)
