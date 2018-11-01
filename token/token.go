@@ -28,6 +28,8 @@ const (
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	LSQUARE   = "["
+	RSQUARE   = "]"
 
 	EQ     = "=="
 	NOT_EQ = "!="

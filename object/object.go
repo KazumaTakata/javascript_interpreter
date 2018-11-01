@@ -39,7 +39,7 @@ type Boolean struct {
 }
 
 func (i *Number) Inspect() string {
-	return fmt.Sprintf("%f", i.Value)
+	return fmt.Sprintf("%v", i.Value)
 }
 
 func (i *Number) Type() ObjectType { return INTEGER_OBJ }

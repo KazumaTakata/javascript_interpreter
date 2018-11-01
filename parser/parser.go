@@ -90,6 +90,35 @@ func (p *Parser) parseCallArgument() []ast.Expression {
 	return args
 }
 
+func (p *Parser) parseArray(function ast.Expression) ast.Expression {
+	exp := &ast.ArrayLiteral{Token: p.curToken}
+	exp.Elements = p.parseArrayLiteral()
+	return exp
+}
+
+func (p *Parser) parseArrayLiteral() []ast.Expression {
+	args := []ast.Expression{}
+
+	if p.peekTokenIs(token.RSQUARE) {
+		p.nextToken()
+		return args
+	}
+	p.nextToken()
+
+	args = append(args, p.parseExpression(LOWEST))
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		args = append(args, p.parseExpression(LOWEST))
+	}
+
+	if !p.expectPeek(token.RSQUARE) {
+		return nil
+	}
+	return args
+}
+
 func (p *Parser) parseFunctionLiteral() ast.Expression {
 	lit := &ast.FunctionLiteral{Token: p.curToken}
 
