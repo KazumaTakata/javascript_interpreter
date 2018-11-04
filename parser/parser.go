@@ -36,6 +36,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.prefixParseFns = make(map[token.TokenType]prefixParseFn)
 	p.registerPrefix(token.IDENT, p.parseIdentifier)
 	p.registerPrefix(token.NUMBER, p.parseNumberLiteral)
+	p.registerPrefix(token.STRING, p.parseStringLiteral)
 	p.registerPrefix(token.BANG, p.parsePrefixExpression)
 	p.registerPrefix(token.MINUS, p.parsePrefixExpression)
 	p.registerPrefix(token.TRUE, p.parseBoolean)
@@ -44,6 +45,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerPrefix(token.IF, p.parseIfExpression)
 	p.registerPrefix(token.FUNCTION, p.parseFunctionLiteral)
 	p.registerPrefix(token.LSQUARE, p.parseArray)
+	p.registerPrefix(token.LBRACE, p.parseHash)
 
 	p.infixParseFns = make(map[token.TokenType]infixParseFn)
 	p.registerInfix(token.PLUS, p.parseInfixExpression)
@@ -89,6 +91,55 @@ func (p *Parser) parseCallArgument() []ast.Expression {
 		return nil
 	}
 	return args
+}
+
+func (p *Parser) parseHash() ast.Expression {
+	exp := &ast.HashLiteral{Token: p.curToken}
+	exp.Hash = p.parseHashLiteral()
+	return exp
+}
+
+func (p *Parser) parseHashLiteral() map[ast.Expression]ast.Expression {
+	hashmap := map[ast.Expression]ast.Expression{}
+
+	if p.peekTokenIs(token.RBRACE) {
+		p.nextToken()
+		return hashmap
+	}
+	p.nextToken()
+
+	hashkey := p.parseExpression(LOWEST)
+
+	if !p.peekTokenIs(token.COLON) {
+		return nil
+	}
+
+	p.nextToken()
+	p.nextToken()
+
+	hashvalue := p.parseExpression(LOWEST)
+
+	hashmap[hashkey] = hashvalue
+
+	for p.peekTokenIs(token.COMMA) {
+		p.nextToken()
+		p.nextToken()
+		hashkey := p.parseExpression(LOWEST)
+
+		if !p.peekTokenIs(token.COLON) {
+			return nil
+		}
+		hashvalue := p.parseExpression(LOWEST)
+
+		hashmap[hashkey] = hashvalue
+
+	}
+
+	if !p.expectPeek(token.RBRACE) {
+		return nil
+	}
+	return hashmap
+
 }
 
 func (p *Parser) parseArray() ast.Expression {
@@ -398,6 +449,12 @@ func (p *Parser) parseNumberLiteral() ast.Expression {
 	}
 
 	lit.Value = value
+	return lit
+}
+
+func (p *Parser) parseStringLiteral() ast.Expression {
+	lit := &ast.StringLiteral{Token: p.curToken}
+	lit.Value = p.curToken.Literal
 	return lit
 }
 

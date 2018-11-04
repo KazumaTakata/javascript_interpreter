@@ -20,6 +20,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return Eval(node.Expression, env)
 	case *ast.NumberLiteral:
 		return &object.Number{Value: node.Value}
+	case *ast.StringLiteral:
+		return &object.String{Value: node.Value}
 	case *ast.Boolean:
 		return nativeBoolToBooleanObject(node.Value)
 	case *ast.PrefixExpression:
@@ -49,11 +51,24 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		function := Eval(node.Function, env)
 		args := evalExpressions(node.Arguments, env)
 		return applyFunction(function, args)
-
 	case *ast.ArrayLiteral:
 		return evalArray(node.Elements, env)
+	case *ast.HashLiteral:
+		return evalHash(node.Hash, env)
 	}
 	return nil
+}
+
+func evalHash(hash map[ast.Expression]ast.Expression, env *object.Environment) object.Object {
+
+	result_hash := map[object.Object]object.Object{}
+	for k, v := range hash {
+		key := Eval(k, env)
+		value := Eval(v, env)
+		result_hash[key] = value
+	}
+
+	return
 }
 
 func evalArray(elements []ast.Expression, env *object.Environment) object.Object {

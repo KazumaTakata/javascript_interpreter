@@ -38,6 +38,9 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
+	case '"':
+		tok.Literal = l.readString()
+		tok.Type = token.STRING
 	case ';':
 		tok = newToken(token.SEMICOLON, l.ch)
 	case '(':
@@ -64,6 +67,8 @@ func (l *Lexer) NextToken() token.Token {
 		}
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
+	case ':':
+		tok = newToken(token.COLON, l.ch)
 	case '*':
 		tok = newToken(token.ASTERISK, l.ch)
 	case '<':
@@ -119,6 +124,15 @@ func (l *Lexer) skipWhitespace() {
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
+}
+
+func (l *Lexer) readString() string {
+	l.readChar()
+	position := l.position
+	for l.ch != '"' {
 		l.readChar()
 	}
 	return l.input[position:l.position]

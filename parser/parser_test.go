@@ -44,10 +44,44 @@ func TestLetStatement(t *testing.T) {
 
 }
 
+func TestString(t *testing.T) {
+
+	input := `
+		"stringdata"
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+
+}
+
 func TestArray(t *testing.T) {
 
 	input := `
 		[2,3,4];
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
+
+}
+
+func TestHash(t *testing.T) {
+
+	input := `
+		{1: 3};
 	`
 
 	l := lexer.New(input)

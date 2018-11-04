@@ -118,6 +118,20 @@ func (es *ExpressionStatement) String() string {
 	return ""
 }
 
+type HashLiteral struct {
+	Token token.Token
+	Hash  map[Expression]Expression
+}
+
+func (h *HashLiteral) String() string {
+	return "hashdummy"
+}
+func (h *HashLiteral) TokenLiteral() string {
+	return h.Token.Literal
+}
+
+func (h *HashLiteral) expressionNode() {}
+
 type ArrayLiteral struct {
 	Token    token.Token
 	Elements []Expression
@@ -141,6 +155,17 @@ func (il *NumberLiteral) expressionNode() {}
 func (il *NumberLiteral) TokenLiteral() string { return il.Token.Literal }
 
 func (il *NumberLiteral) String() string { return il.Token.Literal }
+
+type StringLiteral struct {
+	Token token.Token
+	Value string
+}
+
+func (il *StringLiteral) expressionNode() {}
+
+func (il *StringLiteral) TokenLiteral() string { return il.Token.Literal }
+
+func (il *StringLiteral) String() string { return il.Token.Literal }
 
 type PrefixExpression struct {
 	Token    token.Token

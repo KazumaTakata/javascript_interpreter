@@ -17,6 +17,8 @@ const (
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
 	ARRAY_OBJ        = "ARRAY_OBJ"
+	HASH_OBJ         = "HASH_OBJ"
+	STRING_OBJ       = "STRING_OBJ"
 )
 
 type Error struct {
@@ -29,6 +31,30 @@ func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 type Object interface {
 	Type() ObjectType
 	Inspect() string
+}
+
+type Hash struct {
+	Hash map[Object]Object
+}
+
+func (h *Hash) Type() ObjectType {
+	return HASH_OBJ
+}
+
+func (h *Hash) Inspect() string {
+	var out bytes.Buffer
+	element := []string{}
+
+	for k, v := range h.Hash {
+		eleString := k.Inspect() + ":" + v.Inspect()
+		element = append(element, eleString)
+	}
+
+	out.WriteString("{")
+	out.WriteString(strings.Join(element, ", "))
+	out.WriteString("}")
+
+	return out.String()
 }
 
 type Array struct {
@@ -69,6 +95,16 @@ func (i *Number) Inspect() string {
 }
 
 func (i *Number) Type() ObjectType { return INTEGER_OBJ }
+
+type String struct {
+	Value string
+}
+
+func (i *String) Inspect() string {
+	return fmt.Sprintf("%s", i.Value)
+}
+
+func (i *String) Type() ObjectType { return STRING_OBJ }
 
 func (b *Boolean) Type() ObjectType { return BOOLEAN_OBJ }
 func (b *Boolean) Inspect() string  { return fmt.Sprintf("%t", b.Value) }
