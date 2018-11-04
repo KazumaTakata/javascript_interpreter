@@ -118,6 +118,19 @@ func (es *ExpressionStatement) String() string {
 	return ""
 }
 
+type ArrayLiteral struct {
+	Token    token.Token
+	Elements []Expression
+}
+
+func (ar *ArrayLiteral) String() string {
+	return "arraydummy"
+}
+
+func (ar *ArrayLiteral) TokenLiteral() string { return ar.Token.Literal }
+
+func (il *ArrayLiteral) expressionNode() {}
+
 type NumberLiteral struct {
 	Token token.Token
 	Value float64

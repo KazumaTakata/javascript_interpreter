@@ -48,10 +48,25 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 	case *ast.CallExpression:
 		function := Eval(node.Function, env)
 		args := evalExpressions(node.Arguments, env)
-
 		return applyFunction(function, args)
+
+	case *ast.ArrayLiteral:
+		return evalArray(node.Elements, env)
 	}
 	return nil
+}
+
+func evalArray(elements []ast.Expression, env *object.Environment) object.Object {
+
+	result := &object.Array{}
+
+	for _, element := range elements {
+		ele := Eval(element, env)
+		result.Elements = append(result.Elements, ele)
+	}
+
+	return result
+
 }
 
 func applyFunction(fn object.Object, args []object.Object) object.Object {
@@ -79,9 +94,7 @@ func unwrapReturnValue(obj object.Object) object.Object {
 	if returnValue, ok := obj.(*object.ReturnValue); ok {
 		return returnValue.Value
 	}
-
 	return obj
-
 }
 
 func evalExpressions(exps []ast.Expression, env *object.Environment) []object.Object {

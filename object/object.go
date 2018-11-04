@@ -16,6 +16,7 @@ const (
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
+	ARRAY_OBJ        = "ARRAY_OBJ"
 )
 
 type Error struct {
@@ -28,6 +29,31 @@ func (e *Error) Inspect() string  { return "ERROR: " + e.Message }
 type Object interface {
 	Type() ObjectType
 	Inspect() string
+}
+
+type Array struct {
+	Elements []Object
+}
+
+func (a *Array) Type() ObjectType {
+	return ARRAY_OBJ
+}
+
+func (a *Array) Inspect() string {
+
+	var out bytes.Buffer
+	element := []string{}
+
+	for _, p := range a.Elements {
+		element = append(element, p.Inspect())
+	}
+
+	out.WriteString("[")
+	out.WriteString(strings.Join(element, ", "))
+	out.WriteString("]")
+
+	return out.String()
+
 }
 
 type Number struct {

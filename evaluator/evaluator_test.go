@@ -26,6 +26,44 @@ func TestEvalIntegerExpression(t *testing.T) {
 	}
 }
 
+func TestArrayExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []float64
+	}{
+		{"let x = [2,3,4]", []float64{2, 3, 4}},
+		{"[2,3,4]", []float64{2, 3, 4}},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		if evaluated != nil {
+
+		}
+		// result, ok := evaluated.(*object.Array)
+		// if !ok {
+
+		// }
+		// testArrayObject(t, *result, tt.expected)
+	}
+}
+
+func testArrayObject(t *testing.T, obj object.Array, expected []float64) bool {
+
+	for i, ele := range obj.Elements {
+		result, ok := ele.(*object.Number)
+		if !ok {
+			t.Errorf("object is not Integer. got=%T (%+v)", obj, obj)
+			return false
+		}
+		if result.Value != expected[i] {
+			t.Errorf("")
+		}
+	}
+	return true
+
+}
+
 func testEval(input string) object.Object {
 	l := lexer.New(input)
 	p := parser.New(l)
