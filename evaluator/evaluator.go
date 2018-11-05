@@ -61,6 +61,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 
 func evalHash(hash map[ast.Expression]ast.Expression, env *object.Environment) object.Object {
 
+	objectHash := &object.Hash{}
+
 	result_hash := map[object.Object]object.Object{}
 	for k, v := range hash {
 		key := Eval(k, env)
@@ -68,7 +70,9 @@ func evalHash(hash map[ast.Expression]ast.Expression, env *object.Environment) o
 		result_hash[key] = value
 	}
 
-	return
+	objectHash.Hash = result_hash
+
+	return objectHash
 }
 
 func evalArray(elements []ast.Expression, env *object.Environment) object.Object {
