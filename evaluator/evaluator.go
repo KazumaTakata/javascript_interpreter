@@ -62,30 +62,50 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 }
 
 func evalIndex(node *ast.IndexExpression, env *object.Environment) object.Object {
-	ident := node.Array
+	ident := node.Ident
 	val, _ := env.Get(ident.(*ast.Identifier).Value)
-	array := val.(*object.Array).Elements
-	index := Eval(node.Index, env)
-	indexNumber := int(index.(*object.Number).Value)
-	indexedObject := array[indexNumber]
-
-	return indexedObject
+	switch id := val.(type) {
+	case *object.Array:
+		array := id.Elements
+		index := Eval(node.Index, env)
+		indexNumber := int(index.(*object.Number).Value)
+		indexedObject := array[indexNumber]
+		return indexedObject
+	case *object.Hash:
+		hash := id.Hash
+		index := Eval(node.Index, env)
+		indexvalue := helpObjectToKey(index)
+		indexedObject := hash[indexvalue]
+		return indexedObject
+	}
+	return nil
 }
 
 func evalHash(hash map[ast.Expression]ast.Expression, env *object.Environment) object.Object {
 
 	objectHash := &object.Hash{}
 
-	result_hash := map[object.Object]object.Object{}
+	result_hash := map[string]object.Object{}
 	for k, v := range hash {
 		key := Eval(k, env)
 		value := Eval(v, env)
-		result_hash[key] = value
+		keyvalue := helpObjectToKey(key)
+		result_hash[keyvalue] = value
 	}
 
 	objectHash.Hash = result_hash
 
 	return objectHash
+}
+
+func helpObjectToKey(obj object.Object) string {
+	switch o := obj.(type) {
+	case *object.String:
+		return o.Value
+	case *object.Number:
+		return string(int(o.Value))
+	}
+	return "err"
 }
 
 func evalArray(elements []ast.Expression, env *object.Environment) object.Object {

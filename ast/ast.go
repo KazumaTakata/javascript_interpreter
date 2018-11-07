@@ -134,7 +134,7 @@ func (h *HashLiteral) expressionNode() {}
 
 type IndexExpression struct {
 	Token token.Token
-	Array Expression
+	Ident Expression
 	Index Expression
 }
 

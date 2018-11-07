@@ -65,10 +65,9 @@ func New(l *lexer.Lexer) *Parser {
 	return p
 }
 
-func (p *Parser) parseIndexExpression(array ast.Expression) ast.Expression {
-	exp := &ast.IndexExpression{Token: p.curToken, Array: array}
+func (p *Parser) parseIndexExpression(ident ast.Expression) ast.Expression {
+	exp := &ast.IndexExpression{Token: p.curToken, Ident: ident}
 	exp.Index = p.parseIndex()
-
 	return exp
 }
 
@@ -79,7 +78,6 @@ func (p *Parser) parseIndex() ast.Expression {
 		return nil
 	}
 	return index
-
 }
 
 func (p *Parser) parseCallExpression(function ast.Expression) ast.Expression {

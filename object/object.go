@@ -34,7 +34,7 @@ type Object interface {
 }
 
 type Hash struct {
-	Hash map[Object]Object
+	Hash map[string]Object
 }
 
 func (h *Hash) Type() ObjectType {
@@ -45,10 +45,10 @@ func (h *Hash) Inspect() string {
 	var out bytes.Buffer
 	element := []string{}
 
-	for k, v := range h.Hash {
-		eleString := k.Inspect() + ":" + v.Inspect()
-		element = append(element, eleString)
-	}
+	// for k, v := range h.Hash {
+	// 	eleString := k.(string) + ":" + v.(string)
+	// 	element = append(element, eleString)
+	// }
 
 	out.WriteString("{")
 	out.WriteString(strings.Join(element, ", "))

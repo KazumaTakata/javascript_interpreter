@@ -90,6 +90,27 @@ func TestIndexedArrayExpression(t *testing.T) {
 	}
 }
 
+func TestIndexedHashExpression(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected []float64
+	}{
+		{`let xvalue = { "x": 5 }; xvalue["x"];`, []float64{1}},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+		if evaluated != nil {
+
+		}
+		// result, ok := evaluated.(*object.Array)
+		// if !ok {
+
+		// }
+		// testArrayObject(t, *result, tt.expected)
+	}
+}
+
 func testArrayObject(t *testing.T, obj object.Array, expected []float64) bool {
 
 	for i, ele := range obj.Elements {
