@@ -55,8 +55,21 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		return evalArray(node.Elements, env)
 	case *ast.HashLiteral:
 		return evalHash(node.Hash, env)
+	case *ast.IndexExpression:
+		return evalIndex(node, env)
 	}
 	return nil
+}
+
+func evalIndex(node *ast.IndexExpression, env *object.Environment) object.Object {
+	ident := node.Array
+	val, _ := env.Get(ident.(*ast.Identifier).Value)
+	array := val.(*object.Array).Elements
+	index := Eval(node.Index, env)
+	indexNumber := int(index.(*object.Number).Value)
+	indexedObject := array[indexNumber]
+
+	return indexedObject
 }
 
 func evalHash(hash map[ast.Expression]ast.Expression, env *object.Environment) object.Object {
@@ -183,12 +196,26 @@ func evalInfixExpression(operator string, left, right object.Object) object.Obje
 	switch {
 	case left.Type() == object.INTEGER_OBJ && right.Type() == object.INTEGER_OBJ:
 		return evalIntegerInfixExpression(operator, left, right)
+	case left.Type() == object.STRING_OBJ && right.Type() == object.STRING_OBJ:
+		return evalStringInfixExpression(operator, left, right)
 	case operator == "==":
 		return nativeBoolToBooleanObject(left == right)
 	case operator == "!=":
 		return nativeBoolToBooleanObject(left != right)
 	case left.Type() != right.Type():
 		return newError("type mismatch: %s %s %s", left.Type(), operator, right.Type())
+	default:
+		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
+	}
+}
+
+func evalStringInfixExpression(operator string, left, right object.Object) object.Object {
+	leftVal := left.(*object.String).Value
+	rightVal := right.(*object.String).Value
+
+	switch operator {
+	case "+":
+		return &object.String{Value: leftVal + rightVal}
 	default:
 		return newError("unknown operator: %s %s %s", left.Type(), operator, right.Type())
 	}

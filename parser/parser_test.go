@@ -58,7 +58,22 @@ func TestString(t *testing.T) {
 	if program == nil {
 		t.Fatalf("ParseProgram() returned nil")
 	}
+}
 
+func TestArrayIndex(t *testing.T) {
+
+	input := `
+		array[1]
+	`
+
+	l := lexer.New(input)
+	p := New(l)
+
+	program := p.ParseProgram()
+
+	if program == nil {
+		t.Fatalf("ParseProgram() returned nil")
+	}
 }
 
 func TestArray(t *testing.T) {

@@ -132,6 +132,20 @@ func (h *HashLiteral) TokenLiteral() string {
 
 func (h *HashLiteral) expressionNode() {}
 
+type IndexExpression struct {
+	Token token.Token
+	Array Expression
+	Index Expression
+}
+
+func (ie *IndexExpression) String() string {
+	return "indexdummy"
+}
+
+func (ie *IndexExpression) TokenLiteral() string { return ie.Token.Literal }
+
+func (ie *IndexExpression) expressionNode() {}
+
 type ArrayLiteral struct {
 	Token    token.Token
 	Elements []Expression
